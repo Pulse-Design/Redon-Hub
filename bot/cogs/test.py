@@ -29,4 +29,4 @@ class PredefinedEmbed(Cog):
         _log.info(f"Cog {__name__} ready")
 
 async def setup(bot):
-    bot.add_cog(PredefinedEmbed(bot))
+    await bot.add_cog(PredefinedEmbed(bot))
