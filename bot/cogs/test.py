@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot, Cog, Context, command
-from discord_slash import SlashContext, cog_ext
-from discord_slash.utils.manage_commands import create_option
+from discord import SlashContext, cog_ext
+from discord import create_option
 from discord import Embed
 
 class PredefinedEmbed(Cog):
