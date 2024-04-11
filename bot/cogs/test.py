@@ -14,7 +14,7 @@ class Embed(Cog):
         self.bot = bot
 
     @app_commands.command()
-    async def hola(self, interaction: Interaction):
+    async def embed(self, interaction: Interaction):
         await interaction.response.send_message("hola")
     @Cog.listener()
     async def on_ready(self):
