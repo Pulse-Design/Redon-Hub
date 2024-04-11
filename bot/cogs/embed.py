@@ -1,12 +1,18 @@
 from discord.ext import commands
 import discord
+from discord import app_commands
+
+async def setup(bot):
+    await bot.add_cog(EmbedForm(bot))
 
 class EmbedForm(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.pending_embeds = {}
 
-    @commands.command()
+    @app_commands.command(
+        name="embed", description="Make a discord embed"
+    )
     async def embed(self, ctx):
         # Ask the user for embed details using a form
         await ctx.send("Please enter the title for your embed:")
