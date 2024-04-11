@@ -1,39 +1,59 @@
 from discord.ext.commands import Cog, command
-from discord import Embed
-from discord import cog_ext, SlashContext
+from discord import Interaction
+from discord.embeds import Embed
 import logging
 
 _log = logging.getLogger(__name__)
 
-
-class EmbedCog(Cog):
+class CustomEmbed(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @cog_ext.cog_slash(name="embed", description="Create and send a custom embed.")
-    async def create_embed(self, ctx: SlashContext):
-        # Respond to the slash command with a message to start building the embed
-        await ctx.send("Let's create a custom embed!")
+    @command()
+    async def embed(self, interaction: Interaction):
+        # Ask user for input
+        await interaction.response.send_message("Let's create a custom embed!")
 
-        # Collect user input to build the embed
-        await ctx.send("Enter the title for the embed:")
-        title_msg = await self.bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=60)
-        title = title_msg.content
+        # Wait for user's response
+        def check(m):
+            return m.author == interaction.user and m.channel == interaction.channel
 
-        await ctx.send("Enter the description for the embed:")
-        desc_msg = await self.bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=60)
-        description = desc_msg.content
+        try:
+            response_message = await self.bot.wait_for("message", check=check, timeout=60.0)
+        except TimeoutError:
+            await interaction.response.send_message("Embed creation timed out.")
+            return
 
-        # Create the embed
-        embed = Embed(title=title, description=description)
+        # Get user input and construct the embed
+        embed = Embed(title=response_message.content)
+
+        await interaction.response.send_message("Enter the description:")
+        try:
+            description_message = await self.bot.wait_for("message", check=check, timeout=60.0)
+        except TimeoutError:
+            await interaction.response.send_message("Embed creation timed out.")
+            return
+
+        embed.description = description_message.content
+
+        await interaction.response.send_message("Add fields (name:value, separate fields with semicolon ';'):")
+        try:
+            fields_message = await self.bot.wait_for("message", check=check, timeout=60.0)
+        except TimeoutError:
+            await interaction.response.send_message("Embed creation timed out.")
+            return
+
+        fields = fields_message.content.split(';')
+        for field in fields:
+            name, value = field.split(':')
+            embed.add_field(name=name.strip(), value=value.strip(), inline=False)
 
         # Send the embed
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @Cog.listener()
     async def on_ready(self):
         _log.info(f"Cog {__name__} ready")
 
-
-def setup(bot):
-    bot.add_cog(EmbedCog(bot))
+async def setup(bot):
+    bot.add_cog(CustomEmbed(bot))
