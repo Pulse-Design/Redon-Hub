@@ -1,7 +1,6 @@
 """
 File: /bot/cogs/hola.py
-Description: Link to Pulse Design's Cashapp
-Usage: This cog provides a command to send a Cashapp link for Pulse Design.
+Usage: Link to Pulse Design's Cashapp.
 
 Commands:
     /cashapp - Sends a message with a link to open Pulse Design's Cashapp.
